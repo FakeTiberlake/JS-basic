@@ -5,11 +5,36 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
-  <title>Document</title>
+  <title>Игра: угадай число</title>
 </head>
 <body>
-  <p>Loading, please wait...</p>
-
+  <div class="container">
+    <div class="game-field">
+      <div class="description">
+        <h1 class="description__title">Игра: угадай число</h1>
+        <p class="description__subtitle">Я загадал число от 0 до 999. Ваша задача - угадать его.</p>
+      </div>
+      <div class="number-field">
+        <label for="number-field__input" class="number-field__label">Ваше число: </label>
+        <input type="text" class="number-field__input">
+        <button class="number-field__button">Проверить</button>
+      </div>
+      <div class="result">
+        <div class="result__check">
+          <span class="result__check__label">Результат: </span>
+          <span class="result__check__out"></span>
+        </div>
+        <div class="result__help">
+          <span class="result__help__label">Подсказка: </span>
+          <span class="result__help__out"></span>
+        </div>
+        <div class="result__count">
+          <span class="result__count__label">Число попыток: </span>
+          <span class="result__count__out"></span>
+        </div>
+      </div>
+    </div>
+  </div>
 <script src="scripts.js"></script>
 </body>
 
