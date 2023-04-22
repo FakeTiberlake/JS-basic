@@ -1,51 +1,50 @@
-const readline = require('readline');
+const readline = require('readline-sync');
 const fs = require('fs');
 
+// Задаем диапазон чисел для угадывания
 const minNumber = 1;
 const maxNumber = 100;
-let attempts = 0;
 
-// Генерация случайного числа
+// Генерируем случайное число, которое нужно угадать
 const randomNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
 
-// Создание интерфейса для чтения ввода пользователя
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+// Переменная для хранения количества попыток
+let attempts = 0;
 
 // Функция для записи протокола игры в файл
-function writeLog(data) {
-  fs.appendFile('game.log', data + '\n', err => {
-    if (err) throw err;
-  });
+function writeToFile(data) {
+  fs.appendFileSync('game_log.txt', `${data}\n`);
 }
 
-// Функция для проверки введенного пользователем числа
-function checkNumber(userNumber) {
+// Функция для игры в "угадай число"
+async function guessNumber() {
+  // Запрашиваем у пользователя число и проверяем его на корректность
+  const userNumber = await readline.questionInt(`Угадайте число от ${minNumber} до ${maxNumber}: `);
+  if (userNumber < minNumber || userNumber > maxNumber) {
+    console.log(`Вы ввели некорректное число. Попробуйте еще раз.`);
+    return guessNumber();
+  }
+
+  // Увеличиваем счетчик попыток
   attempts++;
-  if (userNumber < randomNumber) {
-    console.log('Загаданное число больше');
-    writeLog(`Попытка №${attempts}: ${userNumber} - загаданное число больше`);
+
+  // Записываем текущую попытку в протокол игры
+  writeToFile(`Попытка ${attempts}: ${userNumber}`);
+
+  // Сравниваем число пользователя с загаданным числом
+  if (userNumber === randomNumber) {
+    console.log(`Поздравляем! Вы угадали число с ${attempts} попыток!`);
+    writeToFile(`Правильный ответ: ${randomNumber}`);
+  } else if (userNumber < randomNumber) {
+    console.log(`Загаданное число больше ${userNumber}.`);
+    writeToFile(`Загаданное число больше ${userNumber}.`);
+    return guessNumber();
   } else if (userNumber > randomNumber) {
-    console.log('Загаданное число меньше');
-    writeLog(`Попытка №${attempts}: ${userNumber} - загаданное число меньше`);
-  } else {
-    console.log(`Поздравляем, вы угадали число ${randomNumber} за ${attempts} попыток!`);
-    writeLog(`Угадано число ${randomNumber} за ${attempts} попыток`);
-    rl.close();
+    console.log(`Загаданное число меньше ${userNumber}.`);
+    writeToFile(`Загаданное число меньше ${userNumber}.`);
+    return guessNumber();
   }
 }
 
-console.log('Добро пожаловать в игру "Угадай число"!');
-console.log(`Введите число от ${minNumber} до ${maxNumber}`);
-
-// Начало игры
-rl.on('line', input => {
-  const userNumber = parseInt(input);
-  if (isNaN(userNumber) || userNumber < minNumber || userNumber > maxNumber) {
-    console.log(`Введите число от ${minNumber} до ${maxNumber}`);
-  } else {
-    checkNumber(userNumber);
-  }
-});
+// Запускаем игру
+guessNumber();
